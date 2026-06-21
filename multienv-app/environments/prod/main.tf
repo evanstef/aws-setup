@@ -23,6 +23,12 @@ module "network" {
   environment = "prod"
 }
 
+module "eks" {
+  source      = "../../modules/eks"
+  environment = "prod"
+  subnet_ids  = module.network.private_subnet_ids
+}
+
 module "app_stack" {
   source         = "../../modules/app-stack"
   environment    = "prod"
