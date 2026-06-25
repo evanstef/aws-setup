@@ -103,11 +103,12 @@ resource "aws_route53_record" "grafana" {
 
 # Server-nya sendiri
 resource "aws_instance" "app" {
-  ami                    = data.aws_ami.ubuntu.id       # AMI Ubuntu dari data source
-  instance_type          = var.instance_type            # dari input module
-  key_name               = aws_key_pair.deploy.key_name # kunci SSH
-  vpc_security_group_ids = [aws_security_group.web.id]  # firewall
-  subnet_id              = var.public_subnet_id         # 👈 EC2 ditaro di PUBLIC subnet
+  ami                    = data.aws_ami.ubuntu.id                   # AMI Ubuntu dari data source
+  instance_type          = var.instance_type                        # dari input module
+  key_name               = aws_key_pair.deploy.key_name             # kunci SSH
+  vpc_security_group_ids = [aws_security_group.web.id]              # firewall
+  subnet_id              = var.public_subnet_id                     # 👈 EC2 ditaro di PUBLIC subnet
+  iam_instance_profile   = aws_iam_instance_profile.app_server.name # role untuk server EC2 agar lebih secure jaga jaga hacker akses cuman bisa akses password db aja
 
   # nambah disk server
   root_block_device {
