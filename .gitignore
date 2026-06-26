@@ -5,6 +5,11 @@
 *.tfstate.*
 crash.log
 crash.*.log
+
+# Plan output — JANGAN commit (berisi nilai ter-resolve, bisa termasuk secret seperti db_password)
+*.tfplan
+plan.json
+
 *.tfvars
 *.tfvars.json
 !*.tfvars.example
