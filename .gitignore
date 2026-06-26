@@ -1,35 +1,18 @@
 # ===== Terraform =====
-# Folder kerja (provider plugin download, dll) — ini "node_modules"-nya Terraform
 .terraform/
 .terraform.tfstate.lock.info
-
-# State — JANGAN commit (bisa berisi rahasia plaintext)
 *.tfstate
 *.tfstate.*
-
-# Crash log
 crash.log
 crash.*.log
-
-# ===== Secret — JANGAN PERNAH commit =====
-# tfvars sering berisi password/secret → di-ignore.
-# File contoh (.tfvars.example) tetap di-commit sebagai dokumentasi.
 *.tfvars
 *.tfvars.json
 !*.tfvars.example
-
 .env
 .env.*
-
-# ===== Override files =====
 override.tf
 override.tf.json
 *_override.tf
 *_override.tf.json
-
-# ===== CLI config =====
 .terraformrc
 terraform.rc
-
-# CATATAN: .terraform.lock.hcl SENGAJA TIDAK di-ignore (harus di-commit
-# biar versi provider terkunci & konsisten antar mesin — kayak pnpm-lock.yaml)
