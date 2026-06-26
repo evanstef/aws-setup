@@ -15,6 +15,15 @@ variable "db_password" {
 
 provider "aws" {
   region = "ap-southeast-1"
+
+  # Tag default → otomatis nempel ke SEMUA resource di env ini (DRY)
+  default_tags {
+    tags = {
+      CostCenter  = "Engineering"
+      Owner       = "Evan"
+      Environment = "production"
+    }
+  }
 }
 
 # Bikin jaringan (VPC + subnet + IGW + NAT) buat env ini

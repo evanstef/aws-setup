@@ -18,5 +18,3 @@ jobs:
         run: |
           docker run --rm -v "$GITHUB_WORKSPACE:/project" openpolicyagent/conftest:v0.68.2 \
             test multienv-app/modules/app-stack/main.tf -p multienv-app/policy
-
-  
