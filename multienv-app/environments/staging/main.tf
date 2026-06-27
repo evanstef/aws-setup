@@ -7,10 +7,15 @@ terraform {
   }
 }
 
-variable "db_password" {
-  type        = string
-  sensitive   = true
-  description = "Password master RDS Postgres"
+# variable "db_password" {
+#   type        = string
+#   sensitive   = true
+#   description = "Password master RDS Postgres"
+# } 
+
+# tidak menggunakan variable lagi, karena sudah gua store di SSM Parameter Store
+data "aws_ssm_parameter" "db_password" {
+  name = "/app/db-password"
 }
 
 provider "aws" {
@@ -41,7 +46,7 @@ module "eks" {
 module "app_stack" {
   source         = "../../modules/app-stack"
   environment    = "staging"
-  db_password    = var.db_password
+  db_password    = data.aws_ssm_parameter.db_password.value
   instance_type  = "t3.micro"
   app_domain     = "app-staging.evnxc.web.id"
   grafana_domain = "grafana-staging.evnxc.web.id"

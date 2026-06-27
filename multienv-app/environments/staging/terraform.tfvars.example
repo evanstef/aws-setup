@@ -1,3 +1,0 @@
-# Copy file ini jadi `terraform.tfvars` (yang asli di-gitignore), lalu isi password asli.
-#   cp terraform.tfvars.example terraform.tfvars
-db_password = "ganti-dengan-password-staging"

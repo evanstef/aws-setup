@@ -7,10 +7,14 @@ terraform {
   }
 }
 
-variable "db_password" {
-  type        = string
-  sensitive   = true
-  description = "Password master RDS Postgres"
+# variable "db_password" {
+#   type        = string
+#   sensitive   = true
+#   description = "Password master RDS Postgres"
+# }
+
+data "aws_ssm_parameter" "db_password" {
+  name = "/app/db-password"
 }
 
 provider "aws" {
@@ -41,7 +45,7 @@ module "eks" {
 module "app_stack" {
   source         = "../../modules/app-stack"
   environment    = "prod"
-  db_password    = var.db_password
+  db_password    = data.aws_ssm_parameter.db_password.value
   instance_type  = "t3.medium"
   app_domain     = "app.evnxc.web.id"
   grafana_domain = "grafana.evnxc.web.id"
