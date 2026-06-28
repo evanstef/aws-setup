@@ -54,6 +54,7 @@ module "app_stack" {
   vpc_id               = module.network.vpc_id
   public_subnet_id     = module.network.public_subnet_id
   db_subnet_group_name = module.network.db_subnet_group_name
+  multi_az             = true
 }
 
 output "server_ip" {
