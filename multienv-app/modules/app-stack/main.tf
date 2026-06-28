@@ -163,4 +163,5 @@ resource "aws_db_instance" "db" {
   db_subnet_group_name   = var.db_subnet_group_name             # 👈 RDS ditaro di PRIVATE subnet (via subnet group)
   publicly_accessible    = false                                # DB gak kebuka ke internet
   skip_final_snapshot    = true                                 # pas destroy, gak maksa bikin snapshot dulu (buat belajar)
+  multi_az               = var.multi_az                         # buat instansi RDS di 2 region berbeda
 }

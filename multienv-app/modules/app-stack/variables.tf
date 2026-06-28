@@ -42,3 +42,9 @@ variable "db_subnet_group_name" {
   type        = string
   description = "Nama DB subnet group buat RDS (private subnet)"
 }
+
+variable "multi_az" {
+  type        = bool
+  default     = false
+  description = "Buat instansi RDS di 2 region berbeda"
+}
