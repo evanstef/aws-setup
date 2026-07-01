@@ -8,6 +8,11 @@ output "public_subnet_id" {
   description = "ID of the public subnet"
 }
 
+output "public_subnet_ids" {
+  value       = [aws_subnet.public.id, aws_subnet.public_2.id]
+  description = "List public subnet (2 AZ) buat ALB internet-facing"
+}
+
 output "private_subnet_id" {
   value       = aws_subnet.private.id
   description = "ID of the private subnet"

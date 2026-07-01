@@ -8,19 +8,19 @@ data "aws_ami" "ubuntu" {
 }
 
 resource "aws_launch_template" "app" {
-    name_prefix = "app-"
+    name_prefix = "app-${var.environment}-"
     image_id = data.aws_ami.ubuntu.id
     instance_type = "t3.micro"
 }
 
 # ini untuk autoscalling server nya 
 resource "aws_autoscaling_group" "app" {
-    name = "app-asg"
+    name = "app-${var.environment}-asg"
     min_size = 2
     max_size = 6
     desired_capacity = 2
     target_group_arns = [aws_lb_target_group.app.arn]
-    vpc_zone_identifier = var.aws_lb_subnet_ids
+    vpc_zone_identifier = var.private_subnet_ids   # server ASG gunakan private subnet
     launch_template {
         id = aws_launch_template.app.id
         version = "$Latest"
@@ -28,7 +28,7 @@ resource "aws_autoscaling_group" "app" {
 }
 
 resource "aws_autoscaling_policy" "app_policy" {
-   name = "cpu-target-policy"
+   name = "cpu-target-policy-${var.environment}"
    autoscaling_group_name = aws_autoscaling_group.app.name
    policy_type = "TargetTrackingScaling"
 
@@ -42,13 +42,13 @@ resource "aws_autoscaling_policy" "app_policy" {
 
 # setup aws load balancer
 resource "aws_lb" "app" {
-    name               = "app-alb"
-    load_balancer_type = "application"       
-    subnets            = var.aws_lb_subnet_ids
+    name               = "app-${var.environment}-alb"
+    load_balancer_type = "application"
+    subnets            = var.public_subnet_ids   # alb gunakan public subnet
   }
   
 resource "aws_lb_target_group" "app" {
-    name     = "app-tg"
+    name     = "app-${var.environment}-tg"
     port     = 80
     protocol = "HTTP"
     vpc_id   = var.target_group_vpc_id
@@ -60,7 +60,7 @@ resource "aws_lb_target_group" "app" {
 
 # bikin lb listener buat yang http dan juga https juga 
 resource "aws_acm_certificate" "app" {
-    domain_name = "app.evnxc.web.id"
+    domain_name = var.domain_name
     validation_method = "DNS"
 }
 

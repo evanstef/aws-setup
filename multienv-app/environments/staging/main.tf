@@ -58,9 +58,12 @@ module "app_stack" {
 }
 
 module "asg" {
-  source = "../../modules/asg"
+  source              = "../../modules/asg"
+  environment         = "staging"
   target_group_vpc_id = module.network.vpc_id
-  aws_lb_subnet_ids = module.network.private_subnet_ids
+  public_subnet_ids   = module.network.public_subnet_ids
+  private_subnet_ids  = module.network.private_subnet_ids
+  domain_name         = "app-staging.evnxc.web.id"
 }
 
 output "server_ip" {

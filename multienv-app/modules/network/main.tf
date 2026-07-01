@@ -35,8 +35,6 @@ resource "aws_internet_gateway" "main" {
   }
 }
 
-# Route table public: traffic ke internet (0.0.0.0/0) diarahkan lewat IGW
-# (route "local" untuk 10.0.0.0/16 otomatis ada, gak perlu ditulis)
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
 
@@ -53,6 +51,22 @@ resource "aws_route_table" "public" {
 # Nempelin route table public ke public subnet → INI yang bikin si "public" beneran public
 resource "aws_route_table_association" "public" {
   subnet_id      = aws_subnet.public.id
+  route_table_id = aws_route_table.public.id
+}
+
+
+resource "aws_subnet" "public_2" {
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = "10.0.4.0/24"
+  availability_zone       = "ap-southeast-1b"
+  map_public_ip_on_launch = true
+  tags = {
+    Name = "devops-learn-${var.environment}-public-subnet-2"
+  }
+}
+
+resource "aws_route_table_association" "public_2" {
+  subnet_id      = aws_subnet.public_2.id
   route_table_id = aws_route_table.public.id
 }
 
@@ -89,7 +103,6 @@ resource "aws_route_table_association" "private" {
   route_table_id = aws_route_table.private.id
 }
 
-# Private subnet KE-2 di AZ berbeda (1b) — RDS WAJIB minimal 2 AZ
 resource "aws_subnet" "private_2" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.0.3.0/24"
@@ -99,13 +112,11 @@ resource "aws_subnet" "private_2" {
   }
 }
 
-# Association private_2 → private route table yang SAMA (keluar lewat NAT juga)
 resource "aws_route_table_association" "private_2" {
   subnet_id      = aws_subnet.private_2.id
   route_table_id = aws_route_table.private.id
 }
 
-# DB Subnet Group — RDS butuh ini (kumpulan subnet ≥2 AZ buat naro DB)
 resource "aws_db_subnet_group" "main" {
   name       = "devops-learn-${var.environment}-db-subnet-group"
   subnet_ids = [aws_subnet.private.id, aws_subnet.private_2.id]
