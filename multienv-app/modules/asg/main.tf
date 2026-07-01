@@ -1,16 +1,3 @@
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
-  }
-}
-
-provider "aws" {
-  region = "ap-southeast-1"
-}
-
 data "aws_ami" "ubuntu" {
   most_recent = true
   owners = ["099720109477"]
@@ -33,7 +20,7 @@ resource "aws_autoscaling_group" "app" {
     max_size = 6
     desired_capacity = 2
     target_group_arns = [aws_lb_target_group.app.arn]
-    vpc_zone_identifier = ["subnet-aa", "subnet-bb"]
+    vpc_zone_identifier = var.aws_lb_subnet_ids
     launch_template {
         id = aws_launch_template.app.id
         version = "$Latest"
@@ -57,14 +44,14 @@ resource "aws_autoscaling_policy" "app_policy" {
 resource "aws_lb" "app" {
     name               = "app-alb"
     load_balancer_type = "application"       
-    subnets            = ["subnet-aaaa", "subnet-bbbb"]
+    subnets            = var.aws_lb_subnet_ids
   }
   
 resource "aws_lb_target_group" "app" {
     name     = "app-tg"
     port     = 80
     protocol = "HTTP"
-    vpc_id   = "vpc-xxxx"
+    vpc_id   = var.target_group_vpc_id
 
     health_check {
         path = "/"

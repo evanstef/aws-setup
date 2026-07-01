@@ -150,18 +150,22 @@ resource "aws_instance" "app" {
 
 # Database-nya sendiri (RDS = Postgres managed, lifecycle terpisah dari EC2)
 resource "aws_db_instance" "db" {
-  identifier             = "devops-learn-${var.environment}-db" # 👈 prefix env (identifier harus unik)
-  engine                 = "postgres"                           # jenis DB
-  storage_encrypted      = true                                 # 🔒 enkripsi disk database (fix Trivy AWS-0080)
-  engine_version         = "16"                                 # samain sama Postgres lama
-  instance_class         = "db.t3.micro"                        # ukuran (RDS pakai instance_class, BUKAN instance_type)
-  allocated_storage      = 20                                   # disk 20 GB
-  db_name                = "devopslearn"                        # nama database awal
-  username               = "devops"                             # user master
-  password               = var.db_password                      # nilai dari input module
-  vpc_security_group_ids = [aws_security_group.db.id]           # firewall: cuma EC2 yang boleh akses
-  db_subnet_group_name   = var.db_subnet_group_name             # 👈 RDS ditaro di PRIVATE subnet (via subnet group)
-  publicly_accessible    = false                                # DB gak kebuka ke internet
-  skip_final_snapshot    = true                                 # pas destroy, gak maksa bikin snapshot dulu (buat belajar)
-  multi_az               = var.multi_az                         # buat instansi RDS di 2 region berbeda
+  identifier                = "devops-learn-${var.environment}-db"    # 👈 prefix env (identifier harus unik)
+  engine                    = "postgres"                              # jenis DB
+  storage_encrypted         = true                                    # 🔒 enkripsi disk database (fix Trivy AWS-0080)
+  engine_version            = "16"                                    # samain sama Postgres lama
+  instance_class            = "db.t3.micro"                           # ukuran (RDS pakai instance_class, BUKAN instance_type)
+  allocated_storage         = 20                                      # disk 20 GB
+  db_name                   = "devopslearn"                           # nama database awal
+  username                  = "devops"                                # user master
+  password                  = var.db_password                         # nilai dari input module
+  vpc_security_group_ids    = [aws_security_group.db.id]              # firewall: cuma EC2 yang boleh akses
+  db_subnet_group_name      = var.db_subnet_group_name                # 👈 RDS ditaro di PRIVATE subnet (via subnet group)
+  publicly_accessible       = false                                   # DB gak kebuka ke internet
+  skip_final_snapshot       = false                                   # pas destroy, wajib bikin snapshot dulu
+  final_snapshot_identifier = "devops-learn-${var.environment}-final" # untuk snapshot data terakhir
+  multi_az                  = var.multi_az                            # buat instansi RDS di 2 region berbeda
+  backup_retention_period   = 7                                       # untuk simpan data 7 hari terakhir
+  backup_window             = "18:00-19:00"                           # untuk backup data setiap pukul 18:00-19:00 UTC berarti pukul 01:00-02:00 WIB
+  deletion_protection       = true                                    # untuk melindungi data dari penghapusan
 }

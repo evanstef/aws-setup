@@ -57,6 +57,12 @@ module "app_stack" {
   db_subnet_group_name = module.network.db_subnet_group_name
 }
 
+module "asg" {
+  source = "../../modules/asg"
+  target_group_vpc_id = module.network.vpc_id
+  aws_lb_subnet_ids = module.network.private_subnet_ids
+}
+
 output "server_ip" {
   value = module.app_stack.server_ip
 }
